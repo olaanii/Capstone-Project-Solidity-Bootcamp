@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=https://coderabbit.ai/export/schema.json
+language: "en-US"
+reviews:
+  profile: "chill"
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: true
+  review_status: true
+  collapse_walkthrough: false
+  changed_files:
+    enabled: true
+  tools:
+    solhint:
+      enabled: true
+    slither:
+      enabled: true
+chat:
+  auto_reply: true

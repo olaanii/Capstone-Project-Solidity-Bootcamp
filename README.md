@@ -20,9 +20,14 @@ This project implements an NFT minting contract that supports:
 - Hardhat
 - OpenZeppelin Contracts (`ERC721`, `Ownable`, `Pausable`, `ReentrancyGuard`)
 
-## Contract Address (Sepolia)
+## Contract Address & Activity (Sepolia)
 
-Not deployed yet. After deployment, update this section with the deployed address.
+The smart contract has been successfully deployed and verified on the Sepolia test network.
+
+- **Contract Address:** [0xF8F273671D2CeBF9d2B5cF130c5aCFF1943826d7](https://sepolia.etherscan.io/address/0xF8F273671D2CeBF9d2B5cF130c5aCFF1943826d7)
+- **Recent Mint Transaction Hash:** [0x17c95bee77fe130eccf26f979539b2b1716d7f997d40af26e919b857c2348be8](https://sepolia.etherscan.io/tx/0x17c95bee77fe130eccf26f979539b2b1716d7f997d40af26e919b857c2348be8)
+
+The contract is fully functional, with minting and other core features interacting correctly on-chain.
 
 ## Contract API
 
