@@ -44,6 +44,8 @@ Not deployed yet. After deployment, update this section with the deployed addres
 
 - `Minted(address indexed user, uint256 tokenId)`
 - `Withdraw(address indexed owner, uint256 amount)`
+- `BaseURIUpdated(string newBaseURI)`
+- `MintPriceUpdated(uint256 newMintPrice)`
 
 ## Setup
 

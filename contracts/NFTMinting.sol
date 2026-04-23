@@ -86,9 +86,10 @@ contract NFTMinting is ERC721, Ownable, Pausable, ReentrancyGuard {
     function withdraw() external onlyOwner nonReentrant {
         uint256 balance = address(this).balance;
         if (balance == 0) revert NoETHToWithdraw();
-        payable(owner()).sendValue(balance);
+        address recipient = owner();
+        payable(recipient).sendValue(balance);
 
-        emit Withdraw(owner(), balance);
+        emit Withdraw(recipient, balance);
     }
 
     function _baseURI() internal view override returns (string memory) {
