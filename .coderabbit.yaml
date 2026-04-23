@@ -7,12 +7,6 @@ reviews:
   poem: true
   review_status: true
   collapse_walkthrough: false
-  changed_files:
-    enabled: true
-  tools:
-    solhint:
-      enabled: true
-    slither:
-      enabled: true
+  changed_files_summary: true
 chat:
   auto_reply: true
