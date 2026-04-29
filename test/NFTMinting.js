@@ -1,6 +1,22 @@
+/**
+ * @file test/NFTMinting.js
+ * @description Hardhat test suite for the `NFTMinting` contract.
+ *
+ * The tests cover:
+ * - Constructor parameter validation via custom errors
+ * - Minting success path and token metadata
+ * - Supply cap enforcement
+ * - Mint price / msg.value correctness
+ * - Owner-only administrative functions (base URI, mint price, pause, withdraw)
+ * - Pausable behavior
+ * - Withdrawals draining ETH to the owner
+ */
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
+/**
+ * Integration-style tests using a fresh deployment per test via `deployFixture()`.
+ */
 describe("NFTMinting", function () {
   const NAME = "Capstone NFT";
   const SYMBOL = "CNFT";
@@ -8,6 +24,10 @@ describe("NFTMinting", function () {
   const MAX_SUPPLY = 2;
   const MINT_PRICE = ethers.parseEther("0.01");
 
+  /**
+   * Deploys a new `NFTMinting` contract instance and returns useful signers.
+   * @returns {Promise<{contract: any, owner: any, user: any, other: any}>}
+   */
   async function deployFixture() {
     const [owner, user, other] = await ethers.getSigners();
     const Factory = await ethers.getContractFactory("NFTMinting");
@@ -17,6 +37,7 @@ describe("NFTMinting", function () {
     return { contract, owner, user, other };
   }
 
+  // Constructor validation: insecure parameters should revert with the proper custom errors.
   it("reverts deployment with insecure constructor parameters", async function () {
     const Factory = await ethers.getContractFactory("NFTMinting");
 
@@ -34,6 +55,7 @@ describe("NFTMinting", function () {
     );
   });
 
+  // Happy path: minting increments supply, mints to the caller, and tokenURI follows base URI convention.
   it("mints successfully and assigns token metadata", async function () {
     const { contract, user } = await deployFixture();
 
@@ -46,6 +68,7 @@ describe("NFTMinting", function () {
     expect(await contract.totalSupply()).to.equal(1n);
   });
 
+  // Supply cap enforcement: the third mint attempt should revert when `maxSupply` has been reached.
   it("reverts when max supply is reached", async function () {
     const { contract, user, other } = await deployFixture();
 
@@ -58,6 +81,7 @@ describe("NFTMinting", function () {
     );
   });
 
+  // Payments enforcement: mint must be called with exact ETH equal to the configured mint price.
   it("reverts when ETH sent is not equal to mint price", async function () {
     const { contract, user } = await deployFixture();
 
@@ -71,6 +95,8 @@ describe("NFTMinting", function () {
     );
   });
 
+  // Owner-only admin functions: invalid values should revert with the contract's custom errors,
+  // and callers must be restricted by Ownable.
   it("reverts when owner sets invalid base URI or mint price", async function () {
     const { contract, owner } = await deployFixture();
 
@@ -81,6 +107,7 @@ describe("NFTMinting", function () {
     );
   });
 
+  // Access control: non-owners should be unable to call admin functions.
   it("allows only owner to call admin functions", async function () {
     const { contract, user } = await deployFixture();
 
@@ -106,6 +133,7 @@ describe("NFTMinting", function () {
     );
   });
 
+  // Funds flow: after a mint, `withdraw()` should transfer the contract ETH balance to the owner.
   it("withdraws contract balance to owner", async function () {
     const { contract, owner, user } = await deployFixture();
 
@@ -122,6 +150,7 @@ describe("NFTMinting", function () {
     expect(await ethers.provider.getBalance(await contract.getAddress())).to.equal(0n);
   });
 
+  // Pausable behavior: minting should revert while paused, and succeed again after unpausing.
   it("prevents minting when paused and allows again when unpaused", async function () {
     const { contract, owner, user } = await deployFixture();
 
