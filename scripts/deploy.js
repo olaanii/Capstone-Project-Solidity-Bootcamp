@@ -1,14 +1,11 @@
 /**
  * @file scripts/deploy.js
- * @description Hardhat deployment script for the `NFTMinting` contract.
- *              Values can be configured via environment variables, making it easy
- *              to deploy to multiple networks with different mint settings.
+ * @description Hardhat deployment script for the `NFTMinting` contract with rarity tiers.
+ *              The contract uses a hardcoded Pinata folder base URI for images.
  *
  * @env {string} NFT_NAME - ERC721 name (default: "Capstone NFT").
  * @env {string} NFT_SYMBOL - ERC721 symbol (default: "CNFT").
- * @env {string} BASE_URI - Metadata base URI (default: "ipfs://your-metadata-base/").
  * @env {string} MAX_SUPPLY - Maximum mintable supply (default: 1000). Parsed as BigInt.
- * @env {string} MINT_PRICE_WEI - Mint price in wei (default: 0.01 ETH). Parsed as BigInt.
  *
  * @dev If deploying to Sepolia and `ETHERSCAN_API_KEY` is set, the script will
  *      wait for block confirmations and attempt contract verification.
@@ -22,16 +19,26 @@ const hre = require("hardhat");
 async function main() {
   const name = process.env.NFT_NAME || "Capstone NFT";
   const symbol = process.env.NFT_SYMBOL || "CNFT";
-  const baseURI = process.env.BASE_URI || "ipfs://your-metadata-base/";
   const maxSupply = process.env.MAX_SUPPLY ? BigInt(process.env.MAX_SUPPLY) : 1000n;
-  const mintPriceWei = process.env.MINT_PRICE_WEI ? BigInt(process.env.MINT_PRICE_WEI) : hre.ethers.parseEther("0.01");
 
   const Factory = await hre.ethers.getContractFactory("NFTMinting");
-  const contract = await Factory.deploy(name, symbol, baseURI, maxSupply, mintPriceWei);
+  const contract = await Factory.deploy(
+    name, 
+    symbol, 
+    maxSupply
+  );
   await contract.waitForDeployment();
 
   const address = await contract.getAddress();
   console.log(`NFTMinting deployed to: ${address}`);
+  console.log(`Max Supply: ${maxSupply}`);
+  
+  // Log the hardcoded prices and limits
+  console.log(`Common Price: 100000000000000 wei (0.0001 ETH)`);
+  console.log(`Rare Price: 500000000000000 wei (0.0005 ETH)`);
+  console.log(`Legendary Price: 2000000000000000 wei (0.002 ETH)`);
+  console.log(`Wallet Limits - Common: 5, Rare: 3, Legendary: 1`);
+  console.log(`Base URI: https://gateway.pinata.cloud/ipfs/bafybeicm7ebe23oj3kqod272ta3ksloyyk5v2byjrlcgc6gxq27mvpoxgm/`);
 
   // Optional Etherscan verification on Sepolia.
   if (hre.network.name === "sepolia" && process.env.ETHERSCAN_API_KEY) {
@@ -40,7 +47,11 @@ async function main() {
 
     await hre.run("verify:verify", {
       address,
-      constructorArguments: [name, symbol, baseURI, maxSupply, mintPriceWei]
+      constructorArguments: [
+        name, 
+        symbol, 
+        maxSupply
+      ]
     });
   }
 }

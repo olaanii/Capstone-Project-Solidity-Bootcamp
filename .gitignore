@@ -1,5 +1,85 @@
+# Dependencies
 node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Hardhat
 cache/
 artifacts/
+typechain/
+typechain-types/
+
+# Coverage
 coverage/
+coverage.json
+.coverage_artifacts/
+.coverage_cache/
+.coverage_contracts/
+.coverage_env/
+
+# Environment variables (SECURITY CRITICAL)
 .env
+.env.local
+.env.*.local
+.env.production
+.env.development
+.env.test
+
+# Private keys and mnemonics (SECURITY CRITICAL)
+*.key
+*.pem
+*.p12
+*.pfx
+private.key
+mnemonic.txt
+wallet.json
+keystore/
+
+# Build outputs
+dist/
+build/
+out/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Testing
+.coverage_artifacts/
+.coverage_cache/
+
+# Typechain
+typechain-types/
+
+# Deployment files (may contain sensitive data)
+deployments/localhost/
+deployments/hardhat/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+.cache/
+.parcel-cache/
+.next/
+
+# Duplicate directories (security concern)
+frontend/frontend/

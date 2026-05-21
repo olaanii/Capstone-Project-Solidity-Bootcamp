@@ -18,8 +18,8 @@ const { ethers } = require("hardhat");
  * Integration-style tests using a fresh deployment per test via `deployFixture()`.
  */
 describe("NFTMinting", function () {
-  const NAME = "Capstone NFT";
-  const SYMBOL = "CNFT";
+  const NAME = "FLUXX NFT";
+  const SYMBOL = "FLX";
   const BASE_URI = "ipfs://base/";
   const MAX_SUPPLY = 2;
   const MINT_PRICE = ethers.parseEther("0.01");
