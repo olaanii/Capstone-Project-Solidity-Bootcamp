@@ -204,7 +204,7 @@ export default function CollectionPage() {
   return (
     <div className="min-h-screen bg-[#050a0d] text-white font-sans">
       {/* Navigation Bar - Responsive */}
-      <nav className="fixed top-4 sm:top-6 lg:top-8 left-4 right-4 sm:left-[5%] sm:right-[5%] lg:left-[5.56%] lg:right-[5.56%] max-w-[1280px] mx-auto z-50">
+      <nav className="fixed top-4 sm:top-6 lg:top-8 left-4 right-4 sm:left-[5%] sm:right-[5%] lg:left-[5.56%] lg:right-[5.56%] max-w-7xl mx-auto z-50">
         <div className="backdrop-blur-md bg-[rgba(255,255,255,0.1)] border border-[rgba(255,255,255,0.1)] border-b rounded-full px-3 sm:px-4 lg:px-6 py-2 sm:py-3 lg:py-4 flex items-center justify-between">
           <img src="/logo.png" alt="FLUXX NFT" className="h-6 sm:h-7 lg:h-8 w-auto" />
           <div className="hidden sm:flex items-center gap-4 lg:gap-8">
@@ -256,8 +256,8 @@ export default function CollectionPage() {
       {/* Main Content - Responsive */}
       <main className="pt-24 sm:pt-28 lg:pt-32 px-4 sm:px-8 lg:px-12 xl:px-20 max-w-[1440px] mx-auto relative min-h-screen">
         {/* Background Effects - Hidden on mobile */}
-        <div className="hidden lg:block absolute left-[20%] xl:left-[360px] top-[10%] xl:top-[225px] w-[200px] xl:w-[384px] h-[200px] xl:h-[384px] bg-[#d2f032] blur-[50px] rounded-full opacity-20 mix-blend-screen"></div>
-        <div className="hidden lg:block absolute right-[20%] xl:right-[360px] bottom-[10%] xl:bottom-[225px] w-[200px] xl:w-[384px] h-[200px] xl:h-[384px] bg-[#caebc9] blur-[50px] rounded-full opacity-10 mix-blend-screen"></div>
+        <div className="hidden lg:block absolute left-[20%] xl:left-[360px] xl:top-[225px] w-50 xl:w-96 h-50 xl:h-96 bg-[#d2f032] blur-[50px] rounded-full opacity-20 mix-blend-screen"></div>
+        <div className="hidden lg:block absolute right-[20%] xl:right-[360px] xl:bottom-[225px] w-50 xl:w-96 h-50 xl:h-96 bg-[#caebc9] blur-[50px] rounded-full opacity-10 mix-blend-screen"></div>
 
         <div className="relative z-10">
           <div className="flex items-center justify-center sm:justify-start gap-3 sm:gap-4 mb-6 sm:mb-8">
