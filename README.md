@@ -136,7 +136,7 @@ FLUXX NFT Collection is a production-ready NFT minting platform featuring:
 
 ## Installation & Setup
 
-### Smart Contract
+### Smart Contract (Setup)
 
 ```bash
 npm install
@@ -149,7 +149,7 @@ Populate `.env` with:
 - Deployer private key
 - Etherscan API key
 
-### Frontend
+### Frontend (Setup)
 
 ```bash
 cd frontend
@@ -238,6 +238,7 @@ The contract returns base64-encoded metadata JSON:
 ## IPFS Image Hosting
 
 Images are hosted on Pinata with individual IPFS CIDs:
+
 - Public gateway: `https://gateway.pinata.cloud/ipfs/`
 - No authentication required for public access
 - Individual CIDs mapped to rarity tiers in contract
