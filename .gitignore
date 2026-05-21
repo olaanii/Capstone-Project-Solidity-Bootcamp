@@ -83,3 +83,4 @@ Thumbs.db
 
 # Duplicate directories (security concern)
 frontend/frontend/
+.vercel
