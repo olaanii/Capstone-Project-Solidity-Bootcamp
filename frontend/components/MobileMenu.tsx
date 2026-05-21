@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useDisconnect } from "wagmi";
 
 interface MobileMenuProps {
-  currentPage: "home" | "collection";
+  currentPage: "home" | "collection" | "marketplace";
 }
 
 export function MobileMenu({ currentPage }: MobileMenuProps) {
@@ -49,6 +49,15 @@ export function MobileMenu({ currentPage }: MobileMenuProps) {
             }`}
           >
             Collection
+          </a>
+          <a
+            href="/marketplace"
+            onClick={() => setIsOpen(false)}
+            className={`block px-4 py-3 text-sm transition-colors ${
+              currentPage === "marketplace" ? "text-[#d2f032] bg-[rgba(210,240,50,0.1)]" : "text-[#c6c9ae] hover:text-white"
+            }`}
+          >
+            Marketplace
           </a>
           <div className="border-t border-[rgba(68,73,51,0.2)]">
             <button

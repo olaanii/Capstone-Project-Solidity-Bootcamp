@@ -3,12 +3,15 @@
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import { Rarity } from "@/lib/contractABI";
-import { RARITY_CONFIG, NFT_IMAGES, RARITY_VALUES } from "@/lib/constants";
+import { RARITY_CONFIG, NFT_IMAGES, RARITY_VALUES, MARKETPLACE_ADDRESS } from "@/lib/constants";
 import { useContract } from "@/hooks/useContract";
+import { useMarketplace } from "@/hooks/useMarketplace";
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
 import { metaMask } from 'wagmi/connectors';
 import { Alert } from "@/components/Alert";
 import { MobileMenu } from "@/components/MobileMenu";
+import { ListingModal } from "@/components/ListingModal";
+import { ManageListingModal } from "@/components/ManageListingModal";
 
 interface MintedNFT {
   tokenId: string;
@@ -16,6 +19,8 @@ interface MintedNFT {
   name: string;
   image: string;
   value: string;
+  isListed?: boolean;
+  listingPrice?: string;
 }
 
 export default function CollectionPage() {
@@ -23,11 +28,14 @@ export default function CollectionPage() {
   const { address, isConnected, chainId } = useAccount();
   const { connect } = useConnect();
   const { disconnect } = useDisconnect();
+  const marketplace = useMarketplace();
   const [nfts, setNfts] = useState<MintedNFT[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<Rarity | -1>(-1);
   const [mounted, setMounted] = useState(false);
   const [alertInfo, setAlertInfo] = useState<{ message: string; type: "error" | "success" | "warning" | "info" } | null>(null);
+  const [listingModal, setListingModal] = useState<{ isOpen: boolean; nft: MintedNFT | null }>({ isOpen: false, nft: null });
+  const [manageModal, setManageModal] = useState<{ isOpen: boolean; nft: MintedNFT | null }>({ isOpen: false, nft: null });
 
   useEffect(() => {
     setMounted(true);
@@ -52,6 +60,16 @@ export default function CollectionPage() {
           
           const userNfts: MintedNFT[] = [];
           
+          // Get all active listings if marketplace is deployed
+          let activeListings: any[] = [];
+          if (MARKETPLACE_ADDRESS) {
+            try {
+              activeListings = await marketplace.getActiveListings();
+            } catch (err) {
+              console.log("Marketplace not deployed or error fetching listings");
+            }
+          }
+          
           for (let i = 1; i <= Number(totalSupply); i++) {
             try {
               const owner = await contract.ownerOf(i);
@@ -62,12 +80,19 @@ export default function CollectionPage() {
                 const images = NFT_IMAGES[tierName];
                 const imageIndex = i % images.length;
                 
+                // Check if this NFT is listed
+                const listing = activeListings.find(
+                  (l) => Number(l.tokenId) === i && l.seller.toLowerCase() === address.toLowerCase()
+                );
+                
                 userNfts.push({
                   tokenId: i.toString(),
                   tier: tierIndex,
                   name: `NFT #${i}`,
                   image: images[imageIndex],
-                  value: RARITY_VALUES[tierIndex as keyof typeof RARITY_VALUES]
+                  value: RARITY_VALUES[tierIndex as keyof typeof RARITY_VALUES],
+                  isListed: !!listing,
+                  listingPrice: listing ? ethers.formatEther(listing.price) : undefined
                 });
               }
             } catch (err) {
@@ -91,15 +116,101 @@ export default function CollectionPage() {
     ? nfts 
     : nfts.filter(nft => nft.tier === filter);
 
+  const handleListNFT = async (tokenId: number, price: string): Promise<boolean> => {
+    const success = await marketplace.listNFT(tokenId, price);
+    if (success) {
+      setAlertInfo({ message: `Successfully listed NFT #${tokenId} for ${price} ETH!`, type: "success" });
+      // Reload collection to update listing status
+      const loadCollection = async () => {
+        if (contract && address) {
+          const totalSupply = await contract.totalSupply();
+          const userNfts: MintedNFT[] = [];
+          let activeListings: any[] = [];
+          if (MARKETPLACE_ADDRESS) {
+            try {
+              activeListings = await marketplace.getActiveListings();
+            } catch (err) {
+              console.log("Error fetching listings");
+            }
+          }
+          for (let i = 1; i <= Number(totalSupply); i++) {
+            try {
+              const owner = await contract.ownerOf(i);
+              if (owner.toLowerCase() === address.toLowerCase()) {
+                const tier = await contract.getTokenRarity(i);
+                const tierIndex = Number(tier);
+                const tierName = tierIndex === 0 ? "common" : tierIndex === 1 ? "rare" : "legendary";
+                const images = NFT_IMAGES[tierName];
+                const imageIndex = i % images.length;
+                const listing = activeListings.find(
+                  (l) => Number(l.tokenId) === i && l.seller.toLowerCase() === address.toLowerCase()
+                );
+                userNfts.push({
+                  tokenId: i.toString(),
+                  tier: tierIndex,
+                  name: `NFT #${i}`,
+                  image: images[imageIndex],
+                  value: RARITY_VALUES[tierIndex as keyof typeof RARITY_VALUES],
+                  isListed: !!listing,
+                  listingPrice: listing ? ethers.formatEther(listing.price) : undefined
+                });
+              }
+            } catch (err) {
+              console.error(`Error fetching token ${i}:`, err);
+            }
+          }
+          setNfts(userNfts);
+        }
+      };
+      await loadCollection();
+    } else if (marketplace.error) {
+      setAlertInfo({ message: marketplace.error, type: "error" });
+    }
+    return success;
+  };
+
+  const handleUpdatePrice = async (tokenId: number, newPrice: string): Promise<boolean> => {
+    const success = await marketplace.updateListingPrice(tokenId, newPrice);
+    if (success) {
+      setAlertInfo({ message: `Successfully updated price for NFT #${tokenId} to ${newPrice} ETH!`, type: "success" });
+      // Update the NFT in the list
+      setNfts(nfts.map(nft => 
+        nft.tokenId === tokenId.toString() 
+          ? { ...nft, listingPrice: newPrice }
+          : nft
+      ));
+    } else if (marketplace.error) {
+      setAlertInfo({ message: marketplace.error, type: "error" });
+    }
+    return success;
+  };
+
+  const handleCancelListing = async (tokenId: number): Promise<boolean> => {
+    const success = await marketplace.cancelListing(tokenId);
+    if (success) {
+      setAlertInfo({ message: `Successfully canceled listing for NFT #${tokenId}!`, type: "success" });
+      // Update the NFT in the list
+      setNfts(nfts.map(nft => 
+        nft.tokenId === tokenId.toString() 
+          ? { ...nft, isListed: false, listingPrice: undefined }
+          : nft
+      ));
+    } else if (marketplace.error) {
+      setAlertInfo({ message: marketplace.error, type: "error" });
+    }
+    return success;
+  };
+
   return (
     <div className="min-h-screen bg-[#050a0d] text-white font-sans">
       {/* Navigation Bar - Responsive */}
       <nav className="fixed top-4 sm:top-6 lg:top-8 left-4 right-4 sm:left-[5%] sm:right-[5%] lg:left-[5.56%] lg:right-[5.56%] max-w-[1280px] mx-auto z-50">
-        <div className="backdrop-blur-[12px] bg-[rgba(255,255,255,0.1)] border border-[rgba(255,255,255,0.1)] border-b rounded-full px-3 sm:px-4 lg:px-6 py-2 sm:py-3 lg:py-4 flex items-center justify-between">
+        <div className="backdrop-blur-md bg-[rgba(255,255,255,0.1)] border border-[rgba(255,255,255,0.1)] border-b rounded-full px-3 sm:px-4 lg:px-6 py-2 sm:py-3 lg:py-4 flex items-center justify-between">
           <img src="/logo.png" alt="FLUXX NFT" className="h-6 sm:h-7 lg:h-8 w-auto" />
           <div className="hidden sm:flex items-center gap-4 lg:gap-8">
             <a href="/" className="text-[#c6c9ae] text-xs sm:text-sm hover:text-white transition">Home</a>
             <a href="/collection" className="text-[#d2f032] text-xs sm:text-sm border-b-2 border-[#d2f032] pb-1">Collection</a>
+            <a href="/marketplace" className="text-[#c6c9ae] text-xs sm:text-sm hover:text-white transition">Marketplace</a>
           </div>
           {!mounted ? (
             <div className="bg-[#d2f032] px-3 sm:px-4 lg:px-6 py-2 sm:py-2.5 lg:py-3 rounded-full text-[#2c3400] text-xs sm:text-sm font-medium">
@@ -229,18 +340,52 @@ export default function CollectionPage() {
                       alt={nft.name}
                       className="w-full h-full object-cover"
                     />
+                    {/* Rarity Badge */}
                     <div className="absolute top-2 sm:top-4 right-2 sm:right-4 bg-[rgba(18,18,18,0.8)] border border-[rgba(255,255,255,0.1)] rounded-full px-2 sm:px-3 lg:px-4 py-1 sm:py-2">
                       <span className="text-[#d2f032] text-[10px] sm:text-xs font-bold tracking-[1.2px]">
                         {RARITY_CONFIG[nft.tier === 0 ? "common" : nft.tier === 1 ? "rare" : "legendary"].name.toUpperCase()}
                       </span>
                     </div>
+                    {/* Active Listing Badge */}
+                    {nft.isListed && (
+                      <div className="absolute top-2 sm:top-4 left-2 sm:left-4 bg-[rgba(210,240,50,0.9)] border border-[#d2f032] rounded-full px-2 sm:px-3 lg:px-4 py-1 sm:py-2">
+                        <span className="text-[#2c3400] text-[10px] sm:text-xs font-bold tracking-[1.2px]">
+                          LISTED
+                        </span>
+                      </div>
+                    )}
                   </div>
                   <div className="p-3 sm:p-4 lg:p-6">
                     <h3 className="text-white font-bold text-base sm:text-lg lg:text-xl mb-2">{nft.name}</h3>
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-center mb-3">
                       <span className="text-[#c4c9ac] text-xs sm:text-sm">ID: {nft.tokenId}</span>
                       <span className="text-[#d2f032] font-bold text-sm sm:text-base">{nft.value} ETH</span>
                     </div>
+                    {/* Listing Price Display */}
+                    {nft.isListed && nft.listingPrice && (
+                      <div className="mb-3 p-2 bg-[rgba(210,240,50,0.1)] border border-[rgba(210,240,50,0.3)] rounded-lg">
+                        <p className="text-[#c4c9ac] text-xs">Listed for:</p>
+                        <p className="text-[#d2f032] font-bold text-sm">{nft.listingPrice} ETH</p>
+                      </div>
+                    )}
+                    {/* Action Buttons */}
+                    {MARKETPLACE_ADDRESS ? (
+                      nft.isListed ? (
+                        <button
+                          onClick={() => setManageModal({ isOpen: true, nft })}
+                          className="w-full bg-[rgba(210,240,50,0.2)] border border-[#d2f032] text-[#d2f032] py-2 sm:py-3 rounded-lg font-bold text-sm sm:text-base hover:bg-[rgba(210,240,50,0.3)] transition"
+                        >
+                          Manage Listing
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => setListingModal({ isOpen: true, nft })}
+                          className="w-full bg-[#d2f032] text-[#2c3400] py-2 sm:py-3 rounded-lg font-bold text-sm sm:text-base hover:opacity-90 transition"
+                        >
+                          List for Sale
+                        </button>
+                      )
+                    ) : null}
                   </div>
                 </div>
               ))}
@@ -258,6 +403,40 @@ export default function CollectionPage() {
           <a href="#" className="hover:text-white transition">Twitter</a>
         </div>
       </footer>
+
+      {/* Listing Modal */}
+      {listingModal.nft && (
+        <ListingModal
+          tokenId={parseInt(listingModal.nft.tokenId)}
+          tokenName={listingModal.nft.name}
+          tokenImage={listingModal.nft.image}
+          isOpen={listingModal.isOpen}
+          onClose={() => setListingModal({ isOpen: false, nft: null })}
+          onList={(price) => handleListNFT(parseInt(listingModal.nft!.tokenId), price)}
+          needsApproval={true}
+          onApprove={async () => {
+            const success = await marketplace.approveMarketplace(parseInt(listingModal.nft!.tokenId));
+            if (!success && marketplace.error) {
+              setAlertInfo({ message: marketplace.error, type: "error" });
+            }
+            return success;
+          }}
+        />
+      )}
+
+      {/* Manage Listing Modal */}
+      {manageModal.nft && (
+        <ManageListingModal
+          tokenId={parseInt(manageModal.nft.tokenId)}
+          tokenName={manageModal.nft.name}
+          tokenImage={manageModal.nft.image}
+          currentPrice={manageModal.nft.listingPrice || "0"}
+          isOpen={manageModal.isOpen}
+          onClose={() => setManageModal({ isOpen: false, nft: null })}
+          onUpdatePrice={(newPrice) => handleUpdatePrice(parseInt(manageModal.nft!.tokenId), newPrice)}
+          onCancelListing={() => handleCancelListing(parseInt(manageModal.nft!.tokenId))}
+        />
+      )}
     </div>
   );
 }

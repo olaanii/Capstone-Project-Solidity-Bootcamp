@@ -74,11 +74,12 @@ export default function MintPage() {
     <div className="min-h-screen bg-[#050a0d] text-white font-sans">
       {/* Navigation Bar - Responsive */}
       <nav className="fixed top-4 sm:top-6 lg:top-8 left-4 right-4 sm:left-[5%] sm:right-[5%] lg:left-[5.56%] lg:right-[5.56%] max-w-[1280px] mx-auto z-50">
-        <div className="backdrop-blur-[12px] bg-[rgba(255,255,255,0.1)] border border-[rgba(255,255,255,0.1)] border-b rounded-full px-3 sm:px-4 lg:px-6 py-2 sm:py-3 lg:py-4 flex items-center justify-between">
+        <div className="backdrop-blur-md bg-[rgba(255,255,255,0.1)] border border-[rgba(255,255,255,0.1)] border-b rounded-full px-3 sm:px-4 lg:px-6 py-2 sm:py-3 lg:py-4 flex items-center justify-between">
           <img src="/logo.png" alt="FLUXX NFT" className="h-6 sm:h-7 lg:h-8 w-auto" />
           <div className="hidden sm:flex items-center gap-4 lg:gap-8">
             <a href="/" className="text-[#d2f032] text-xs sm:text-sm border-b-2 border-[#d2f032] pb-1">Home</a>
             <a href="/collection" className="text-[#c6c9ae] text-xs sm:text-sm hover:text-white transition">Collection</a>
+            <a href="/marketplace" className="text-[#c6c9ae] text-xs sm:text-sm hover:text-white transition">Marketplace</a>
           </div>
           {!mounted ? (
             <div className="bg-[#d2f032] px-3 sm:px-4 lg:px-6 py-2 sm:py-2.5 lg:py-3 rounded-full text-[#2c3400] text-xs sm:text-sm font-medium">
@@ -134,7 +135,7 @@ export default function MintPage() {
             <div className="flex-1 relative order-1 lg:order-1">
               <div className="w-[280px] h-[280px] sm:w-[350px] sm:h-[350px] md:w-[400px] md:h-[400px] lg:w-[450px] lg:h-[450px] xl:w-[500px] xl:h-[500px] mx-auto relative">
                 {/* NFT Card Border Design */}
-                <div className="absolute inset-0 rounded-2xl p-1 bg-gradient-to-br from-[#d2f032] via-[#4ade80] to-[#d2f032] animate-gradient-rotate">
+                <div className="absolute inset-0 rounded-2xl p-1 bg-linear-to-br from-[#d2f032] via-[#4ade80] to-[#d2f032] animate-gradient-rotate">
                   <div className="absolute inset-0 rounded-2xl bg-[#050a0d] m-1"></div>
                 </div>
                 {/* Glow Effect */}
@@ -203,7 +204,14 @@ export default function MintPage() {
                 </div>
 
                 {/* Mint Button - Responsive */}
-                {isConnected ? (
+                {!mounted ? (
+                  <button
+                    disabled
+                    className="w-full bg-[#d2f032] text-[#2c3400] py-3 sm:py-4 rounded-lg font-bold text-base sm:text-lg opacity-50 cursor-not-allowed"
+                  >
+                    Loading...
+                  </button>
+                ) : isConnected ? (
                   <button
                     onClick={handleMint}
                     disabled={isMinting || chainId !== 11155111}
