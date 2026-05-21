@@ -12,6 +12,14 @@ FLUXX NFT Collection is a production-ready NFT minting platform featuring:
 - **Wallet Integration**: Wagmi for seamless MetaMask connection
 - **Error Handling**: User-friendly alert notifications for all operations
 
+## 🚀 Live Deployment
+
+**Visit the live application:** [FLUXX NFT Marketplace](https://frontend-dwhkbx7en-olaaniis-projects.vercel.app)
+
+- **Status:** ✅ Live on Vercel
+- **Network:** Sepolia Testnet
+- **Features:** Mint NFTs, Browse Marketplace, Trade NFTs, Manage Collection
+
 ## Tech Stack
 
 ### Smart Contract
