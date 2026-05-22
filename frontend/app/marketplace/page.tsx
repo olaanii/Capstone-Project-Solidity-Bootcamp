@@ -120,9 +120,9 @@ export default function MarketplacePage() {
         <div className="backdrop-blur-md bg-[rgba(255,255,255,0.1)] border border-[rgba(255,255,255,0.1)] border-b rounded-full px-3 sm:px-4 lg:px-6 py-2 sm:py-3 lg:py-4 flex items-center justify-between">
           <img src="/logo.png" alt="FLUXX NFT" className="h-6 sm:h-7 lg:h-8 w-auto" />
           <div className="hidden sm:flex items-center gap-4 lg:gap-8">
-            <a href="/" className="text-[#c6c9ae] text-[32px] hover:text-white transition">Home</a>
-            <a href="/collection" className="text-[#c6c9ae] text-[32px] hover:text-white transition">Collection</a>
-            <a href="/marketplace" className="text-[#d2f032] text-[32px] font-medium border-b-2 border-[#d2f032] pb-1">Marketplace</a>
+            <a href="/" className="text-[#c6c9ae] text-xs sm:text-sm hover:text-white transition">Home</a>
+            <a href="/collection" className="text-[#c6c9ae] text-xs sm:text-sm hover:text-white transition">Collection</a>
+            <a href="/marketplace" className="text-[#d2f032] text-xs sm:text-sm border-b-2 border-[#d2f032] pb-1">Marketplace</a>
           </div>
           {!mounted ? (
             <div className="bg-[#d2f032] px-3 sm:px-4 lg:px-6 py-2 sm:py-2.5 lg:py-3 rounded-full text-[#2c3400] text-xs sm:text-sm font-medium">

@@ -13,6 +13,8 @@ A full-stack NFT minting dApp with tiered rarity system, responsive design, and 
 
 ## Project Overview
 
+[![Project Demo](https://img.youtube.com/vi/Ok4TBIHfJ4Y/0.jpg)](https://www.youtube.com/watch?v=Ok4TBIHfJ4Y)
+
 FLUXX NFT Collection is a production-ready NFT minting platform featuring:
 
 - **Tiered Rarity System**: Common, Rare, and Legendary NFTs with different prices and wallet limits
