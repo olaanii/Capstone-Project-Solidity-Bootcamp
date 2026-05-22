@@ -1,6 +1,13 @@
 # FLUXX NFT Collection
 
-**[Project Presentation](web project.pdf)**
+**[Project Presentation](web project.pdf)** or 
+members
+     Name   	  	  	              Id.no  
+1.	Olani Shambel ----------------- UGR/31097/15   
+2.Yeabsira zerihun --------------- UGR /31384/15  
+3.Kenenisa Mekonen ----------- UGR/30771/15  
+4.	Israel Bekele ------------------- UGR/30715/15  
+
 
 A full-stack NFT minting dApp with tiered rarity system, responsive design, and Etherscan/MetaMask-compatible metadata.
 
