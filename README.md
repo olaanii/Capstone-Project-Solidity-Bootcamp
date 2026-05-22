@@ -1,5 +1,7 @@
 # FLUXX NFT Collection
 
+**[Project Presentation](web project.pdf)**
+
 A full-stack NFT minting dApp with tiered rarity system, responsive design, and Etherscan/MetaMask-compatible metadata.
 
 ## Project Overview
@@ -254,5 +256,7 @@ Capstone-Project-Solidity-Bootcamp/
 │   ├── components/   # React components
 │   ├── hooks/        # Custom React hooks
 │   └── lib/          # Utilities and constants
-└── test/             # Smart contract tests
+├── test/             # Smart contract tests
+├── WHITEPAPER.md     # Comprehensive project documentation
+└── web project.pdf   # Project presentation document
 ```
