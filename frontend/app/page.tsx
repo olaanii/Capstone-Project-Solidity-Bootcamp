@@ -244,9 +244,9 @@ export default function MintPage() {
       {/* Footer */}
       <footer className="bg-[#1d2224] border-t border-[rgba(68,73,51,0.2)] py-12 px-24 mt-20">
         <div className="max-w-[1440px] mx-auto flex justify-center gap-8 text-[#c4c9ac] text-sm">
-          <a href="#" className="hover:text-white transition">Terms</a>
-          <a href="#" className="hover:text-white transition">Privacy</a>
-          <a href="#" className="hover:text-white transition">Discord</a>
+          <a href="/terms" className="hover:text-white transition">Terms</a>
+          <a href="/privacy" className="hover:text-white transition">Privacy</a>
+          <a href="https://discord.gg/ZN3xkYaT" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">Discord</a>
           <a href="#" className="hover:text-white transition">Twitter</a>
         </div>
       </footer>

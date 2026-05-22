@@ -338,9 +338,9 @@ export default function MarketplacePage() {
       {/* Footer - Responsive */}
       <footer className="bg-[#1d2224] border-t border-[rgba(68,73,51,0.2)] py-8 sm:py-10 lg:py-12 px-4 sm:px-8 lg:px-12 xl:px-24 mt-12 sm:mt-16 lg:mt-20">
         <div className="max-w-[1440px] mx-auto flex flex-wrap justify-center gap-4 sm:gap-6 lg:gap-8 text-[#c4c9ac] text-xs sm:text-sm">
-          <a href="#" className="hover:text-white transition">Terms</a>
-          <a href="#" className="hover:text-white transition">Privacy</a>
-          <a href="#" className="hover:text-white transition">Discord</a>
+          <a href="/terms" className="hover:text-white transition">Terms</a>
+          <a href="/privacy" className="hover:text-white transition">Privacy</a>
+          <a href="https://discord.gg/ZN3xkYaT" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">Discord</a>
           <a href="#" className="hover:text-white transition">Twitter</a>
         </div>
       </footer>
