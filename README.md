@@ -24,7 +24,7 @@ FLUXX NFT Collection is a production-ready NFT minting platform featuring:
 
 ## 🚀 Live Deployment
 
-**Visit the live application:** [FLUXX NFT Marketplace](https://frontend-dwhkbx7en-olaaniis-projects.vercel.app)
+**Visit the live application:** [FLUXX NFT Marketplace](https://fluxx-minting-and-marketplace-app.vercel.app)
 
 - **Status:** ✅ Live on Vercel
 - **Network:** Sepolia Testnet
